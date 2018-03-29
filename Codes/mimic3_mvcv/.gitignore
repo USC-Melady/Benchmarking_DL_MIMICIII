@@ -1,0 +1,8 @@
+/*
+!*.ipynb
+!*.py
+!*.r
+!.gitignore
+!/config/
+!/mimic-code/
+!/sql_gen_17features_ts/

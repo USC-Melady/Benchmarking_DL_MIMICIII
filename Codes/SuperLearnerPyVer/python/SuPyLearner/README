@@ -1,0 +1,35 @@
+===========
+SuPyLearner
+===========
+
+An implementation of the SuperLearner algorithm in Python built on scikit-learn.  
+
+Typical useage:
+
+    #Import stuff
+    from supylearner import *
+    from sklearn import datasets, svm, linear_model, neighbors, svm
+    import numpy as np
+
+    #Generate a dataset.
+    np.random.seed(100)
+    X, y=datasets.make_friedman1(1000)
+
+    ols=linear_model.LinearRegression()
+    elnet=linear_model.ElasticNetCV(rho=.1)
+    ridge=linear_model.RidgeCV()
+    lars=linear_model.LarsCV()
+    lasso=linear_model.LassoCV()
+    nn=neighbors.KNeighborsRegressor()
+    svm1=svm.SVR(scale_C=True) 
+    svm2=svm.SVR(kernel='poly', scale_C=True)
+    lib=[ols, elnet, ridge,lars, lasso, nn, svm1, svm2]
+    libnames=["OLS", "ElasticNet", "Ridge", "LARS", "LASSO", "kNN", "SVM rbf", "SVM poly"]
+
+    sl=SuperLearner(lib, libnames, loss="L2")
+
+    sl.fit(X, y)
+
+    sl.summarize()
+
+    cv_superlearner(sl, X, y, K=5)

@@ -1,0 +1,162 @@
+---
+title: "aline-propensity-score"
+author: "Alistair Johnson, Jesse Raffa"
+date: "May 15, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Analysis of arterial line dataset
+
+This notebook creates a propensity score using a dataset of patients with indwelling arterial catheters (IACs). The propensity score is built using physiology and administrative data to predict the need for an IAC. Patients are then matched, and we statistically compare the mortality rate in the two matched groups.
+
+## Load data
+
+First, we load the data and convert some variables into factors. Note this code assumes that you have the csv file available in "~/git/mimic-code/notebooks/aline/".
+
+```{r load}
+wdpath = paste(path.expand("~"),'git/mimic-code/notebooks/aline/',sep='/')
+setwd(wdpath)
+dataset = read.csv(file="aline_data.csv",head=TRUE,sep=",")
+```
+
+
+```{r factorize, echo = FALSE}
+dataset$icustay_id = factor(dataset$icustay_id)
+dataset$day_28_flag = factor(dataset$day_28_flag, levels=c(0,1))
+dataset$gender = factor(dataset$gender, levels=c("F","M"))
+dataset$day_icu_intime = factor(dataset$day_icu_intime)
+dataset$hour_icu_intime = factor(dataset$hour_icu_intime)
+dataset$icu_hour_flag = factor(dataset$icu_hour_flag, levels=c(0,1))
+#dataset$sepsis_flag = factor(dataset$sepsis_flag, levels=c(0,1))
+dataset$sedative_flag = factor(dataset$sedative_flag, levels=c(0,1))
+dataset$fentanyl_flag = factor(dataset$fentanyl_flag, levels=c(0,1))
+dataset$midazolam_flag = factor(dataset$midazolam_flag, levels=c(0,1))
+dataset$propofol_flag = factor(dataset$propofol_flag, levels=c(0,1))
+#dataset$dilaudid_flag = factor(dataset$dilaudid_flag, levels=c(0,1))
+dataset$chf_flag = factor(dataset$chf_flag, levels=c(0,1))
+dataset$afib_flag = factor(dataset$afib_flag, levels=c(0,1))
+dataset$renal_flag = factor(dataset$renal_flag, levels=c(0,1))
+dataset$liver_flag = factor(dataset$liver_flag, levels=c(0,1))
+dataset$copd_flag = factor(dataset$copd_flag, levels=c(0,1))
+dataset$cad_flag = factor(dataset$cad_flag, levels=c(0,1))
+dataset$stroke_flag = factor(dataset$stroke_flag, levels=c(0,1))
+dataset$malignancy_flag = factor(dataset$malignancy_flag, levels=c(0,1))
+dataset$respfail_flag = factor(dataset$respfail_flag, levels=c(0,1))
+dataset$ards_flag = factor(dataset$ards_flag, levels=c(0,1))
+dataset$pneumonia_flag = factor(dataset$pneumonia_flag, levels=c(0,1))
+
+# custom factor
+dataset$service_surg = factor( dataset$service_unit == 'SURG', levels=c(FALSE,TRUE))
+```
+
+```{r impute, echo = FALSE}
+# we could impute data if we like - e.g. the below imputes the mean
+# we currently do complete case analysis however
+imputeFlag = 0
+if (imputeFlag != 0){
+  print("Imputing missing data for some features...")
+for (col in c("weight_first","temp_first","spo2_first",
+              "bun_first","creatinine_first", "chloride_first", "hgb_first",
+              "platelet_first", "potassium_first", "sodium_first", "tco2_first", "wbc_first"))
+{
+  print(paste("Imputing data for: ", col))
+  dataset[is.na(dataset[,col]),col] = mean(dataset[,col], na.rm=TRUE)
+}
+}
+```
+
+If we did not remove any missing data above, we need to subselect complete cases for analysis.
+
+```{r completecases, echo = FALSE}
+# subselect the variables
+dat = dataset[,c("aline_flag",
+                  "age","gender","weight_first","sofa_first","service_surg",
+                  "day_icu_intime","hour_icu_intime",
+                  "chf_flag","afib_flag","renal_flag",
+                  "liver_flag","copd_flag","cad_flag","stroke_flag",
+                  "malignancy_flag","respfail_flag",
+                  "map_first","hr_first","temp_first","spo2_first",
+                  "bun_first","chloride_first","creatinine_first",
+                  "hgb_first","platelet_first",
+                  "potassium_first","sodium_first","tco2_first","wbc_first")]
+
+idxKeep = complete.cases(dat)
+dat = dat[idxKeep,]
+y <- dataset[idxKeep,"day_28_flag"]
+
+print(paste('Removed', sum(!idxKeep),'rows with missing data.'))
+```
+
+## Propensity score model
+
+Now, we build a logistic regression, using all the features, to predict the need for an arterial line catheter from physiology and administrative data.
+
+```{r glm}
+# fit GLM
+glm_fitted = glm(aline_flag ~ ., data=dat, family="binomial", na.action = na.exclude)
+```
+
+With our model fit, we now run step-wise AIC to remove features. We then plot the ROC curve, and calculate the area under the ROC curve.
+
+```{r stepwiseAIC}
+# run step-wise AIC
+library(MASS);  
+glm_fitted  <- stepAIC(glm_fitted )
+
+X <- fitted(glm_fitted, type="response")
+Tr <- dat$aline_flag
+
+library("pROC")    
+roccurve <- roc(Tr ~ X)
+plot(roccurve, col=rainbow(7), main="ROC curve", xlab="Specificity", ylab="Sensitivity")
+auc(roccurve)
+```
+
+Our final model has a subset of features and OK AUROC. Let's plot the predictions it makes using a stacked bar chart.
+
+```{r stackedbar}
+# plot stacked histogram of the predictions
+xrange = seq(0,1,0.01)
+# 3) subset your vectors to be inside xrange
+g1 = subset(X,Tr==0)
+g2 = subset(X,Tr==1)
+
+# 4) Now, use hist to compute the counts per interval
+h1 = hist(g1,breaks=xrange,plot=F)$counts
+h2 = hist(g2,breaks=xrange,plot=F)$counts
+
+barplot(rbind(h1,h2),col=3:2,names.arg=xrange[-1],
+        legend.text=c("No aline","Aline"),space=0,las=1,main="Stacked histogram of X")
+```
+
+We can see we have little support between 0-0.2, and above 0.9. We'll carry on with the knowledge that we'll have few pairs in these probability ranges.
+
+We have built the propensity score using logistic regression in the previous block.
+We now use the `Matching` package to match patients with a caliper size of 0.1.
+After matching, we'll apply McNemar's test for paired samples to determine if patients with and without an a-line have a difference in mortality.
+
+```{r ps}
+library(Matching)
+
+set.seed(43770)
+
+ps <- Match(Y=NULL, Tr=Tr, X=X, M=1, estimand='ATT', caliper=0.1, exact=FALSE, replace=FALSE);
+
+# get pairs with treatment/outcome as cols
+outcome <- data.frame(aline_pt=y[ps$index.treated], match_pt=y[ps$index.control])
+head(outcome)
+
+# mcnemar's test to see if iac related to mort (test should use matched pairs)
+tab.match1 <- table(outcome$aline_pt,outcome$match_pt,dnn=c("Aline","Matched Control"))
+tab.match1
+tab.match1[1,2]/tab.match1[2,1]
+paste("95% Confint", round(exp(c(log(tab.match1[2,1]/tab.match1[1,2]) - qnorm(0.975)*sqrt(1/tab.match1[1,2] +1/tab.match1[2,1]),log(tab.match1[2,1]/tab.match1[1,2]) + qnorm(0.975)*sqrt(1/tab.match1[1,2] +1/tab.match1[2,1])) ),2))
+mcnemar.test(tab.match1) # for 1-1 pairs
+```
+
+The above p-value, which is > 0.05, tells us that we cannot reject the null hypothesis of the aline/non-aline groups having the same mortality rate. Assuming all assumptions of our modelling process are correct, we can infer from this that the use of an indwelling arterial catheter is not associated with a mortality benefit in these patients.

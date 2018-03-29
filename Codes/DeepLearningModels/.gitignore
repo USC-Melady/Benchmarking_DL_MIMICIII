@@ -1,0 +1,27 @@
+# no big data files
+/data/**/imputed-normed.npz
+/data/**/imputed-normed-ep.npz
+/data/**/normed.npz
+/data/**/normed-stats.npz
+/data/**/raw/*
+
+/model/**/*.pkl
+
+# all .pyc file in python/
+/python/**/*.pyc
+/python/**/*.npz
+
+/output/*
+/result/*
+
+/drafts/**/*.aux
+/drafts/**/*.bak
+/drafts/**/*.bbl
+/drafts/**/*.blg
+/drafts/**/*.gz
+/drafts/**/*.gz(busy)
+/drafts/**/*.log
+/drafts/**/*.out
+/drafts/**/*.sav
+
+/drafts/**/~$*.docx
