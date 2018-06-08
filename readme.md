@@ -2,7 +2,10 @@
 # Benchmarking on MIMIC-III Dataset
 
 ## Reference
-Sanjay Purushotham*, Chuizheng Meng*, Zhengping Che, and Yan Liu. "[Benchmark of Deep Learning Models on Large Healthcare MIMIC Datasets.](https://arxiv.org/abs/1710.08531)" arXiv preprint arXiv:1710.08531 (2017).
+
+Sanjay Purushotham*, Chuizheng Meng*, Zhengping Che, and Yan Liu. "[Benchmark of Deep Learning Models on Large Healthcare MIMIC Datasets.](https://www.sciencedirect.com/science/article/pii/S1532046418300716)" Journal of Biomedical Informatics (JBI). 2018.
+
+An earlier version is available on arXiv ([arXiv preprint arXiv:1710.08531](https://arxiv.org/abs/1710.08531)).
 
 ## Requirements
 
