@@ -3,7 +3,7 @@ import numpy as np
 import re
 
 def getConnection():
-    # return psycopg2.connect("dbname='dbname' user='user' host='host' password='password' port='port'")
+    # return psycopg2.connect("dbname='' user='' host='' password='' port=''")
     raise NotImplementedError
 
 def parseUnitsMap(filename='config/unitsmap.unit'):
