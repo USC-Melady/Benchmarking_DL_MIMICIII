@@ -78,10 +78,10 @@ Here are the required steps and their output files for getting the data for benc
 
 ### Generate 17 processed features, 17 raw features and 140 raw features
 
-1. Run `gen_gcs_ts.sql`, `gen_lab_ts.sql`, `gen_pao2_fio2.sql`, `gen_urine_output_ts.sql`, `gen_vital_ts.sql` under folder `[WD]/sql_gen_17features_ts/`. These SQLs are used for generating 17 proceesed features in the form of time series. The results are stored in MATERIALIZED VIEW: `[RD]_GLASGOW_COMA_SCALE_TS`, `MENGCZ_LABS_TS`, `GEN_BLOODGAS_TS`, `MENGCZ_URINE_OUTPUT_TS`, `MENGCZ_VITAL_TS`. Finally, run `gen_17features_first24h.sql` and `gen_17features_first48h.sql` to generate views of non-temporal features and ids.
+1. Run `run_necessary_sqls.ipynb` to run all necessary sql scripts to get all views prepared.
 2. `10_get_17-features-processed.ipynb`. Generate sparse matrices for 17 processed features for first 24hrs and first 48hrs data. The output files `DB_merged_Xhrs.npy`, `ICD9-Xhrs.npy`, `AGE_LOS_MORTALITY_Xhrs.npy`, `ADM_FEATURES_Xhrs.npy`, `ADM_LABELS_Xhrs.npy` are stored in folder `[DD]/admdata_17f/Xhrs/`.
 3. `10_get_17-features-raw.ipynb`: Generate sparse matrices for 17 raw features for first 24hrs and first 48hrs data. The output files `DB_merged_Xhrs.npy`, `ICD9-Xhrs.npy`, `AGE_LOS_MORTALITY_Xhrs.npy`, `ADM_FEATURES_Xhrs.npy`, `ADM_LABELS_Xhrs.npy` are stored in folder `[DD]/admdata_17f/Xhrs_raw/`.
-4. `10_get_99plus-features-raw.ipynb`: Generate sparse matrices for 140 raw features for first 24hrs and first 48hrs data. The output files `DB_merged_Xhrs.npy`, `ICD9-Xhrs.npy`, `AGE_LOS_MORTALITY_Xhrs.npy`, `ADM_FEATURES_Xhrs.npy`, `ADM_LABELS_Xhrs.npy` are stored in folder `[DD]/admdata_99p/Xhrs_raw/`.
+4. `10_get_99plus-features-raw.ipynb`: Generate sparse matrices for 140 raw features for first 24hrs and first 48hrs data. The output files `DB_merged_Xhrs.npy`, `ICD9-Xhrs.npy`, `AGE_LOS_MORTALITY_Xhrs.npy`, `ADM_FEATURES_Xhrs.npy`, `ADM_LABELS_Xhrs.npy` are stored in folder `[DD]/admdata_99p/Xhrs_raw/`. The 140 raw features will be filtered according to their missing rates in later scripts so not all of them will be kept. In our experiments we dropped features with missing rates >= 1-5e-4 and kept 136 features.
 
 ### Generate time series
 
