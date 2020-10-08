@@ -7,3 +7,4 @@
 !/mimic-code/
 !/sql_gen_17features_ts/
 .ipynb_checkpoints/
+conn_config.py
