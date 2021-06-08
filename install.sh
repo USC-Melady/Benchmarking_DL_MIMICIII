@@ -1,0 +1,1 @@
+conda install psycopg2 numpy scipy scikit-learn matplotlib pandas jupyter jupyterlab tqdm

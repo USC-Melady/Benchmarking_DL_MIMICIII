@@ -1,0 +1,16 @@
+{
+    "mimiciii": {
+        "dbname": "",
+        "user": "",
+        "host": "",
+        "password": "",
+        "port": ""
+    },
+    "mimiciv": {
+        "dbname": "",
+        "user": "",
+        "host": "",
+        "password": "",
+        "port": ""
+    }
+}

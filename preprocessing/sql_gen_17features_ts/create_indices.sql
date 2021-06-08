@@ -1,0 +1,14 @@
+DROP INDEX IF EXISTS mengcz_glasgow_coma_scale_ts_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_glasgow_coma_scale_ts_hadm_id_idx ON mimiciii.mengcz_glasgow_coma_scale_ts (hadm_id);
+DROP INDEX IF EXISTS mengcz_vital_ts_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_vital_ts_hadm_id_idx ON mimiciii.mengcz_vital_ts (hadm_id);
+DROP INDEX IF EXISTS mengcz_pao2fio2_ts_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_pao2fio2_ts_hadm_id_idx ON mimiciii.mengcz_pao2fio2_ts (hadm_id);
+DROP INDEX IF EXISTS mengcz_urine_output_ts_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_urine_output_ts_hadm_id_idx ON mimiciii.mengcz_urine_output_ts (hadm_id);
+DROP INDEX IF EXISTS mengcz_labs_ts_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_labs_ts_hadm_id_idx ON mimiciii.mengcz_labs_ts (hadm_id);
+DROP INDEX IF EXISTS mengcz_17features_first24h_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_17features_first24h_hadm_id_idx ON mimiciii.mengcz_17features_first24h (hadm_id);
+DROP INDEX IF EXISTS mengcz_17features_first48h_hadm_id_idx;
+CREATE INDEX IF NOT EXISTS mengcz_17features_first48h_hadm_id_idx ON mimiciii.mengcz_17features_first48h (hadm_id);
