@@ -39,6 +39,8 @@ The preprocessing should finish within 1 day with `--num_workers 4`.
 
 All input files are stored under `data/` and require 36GB disk space.
 
+We also provide processed data upon request (only containing necessary files for training following models). Please contact Chuizheng Meng (chuizhem@usc.edu) for the processed data.
+
 ### Evaluate performance
 
 <!-- #### SuperLearner(R version)
