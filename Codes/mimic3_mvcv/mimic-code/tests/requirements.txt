@@ -4,4 +4,4 @@ psycopg2==2.6.2
 python-dateutil==2.5.3
 pytz==2016.4
 six==1.10.0
-wheel==0.26.0
+wheel==0.38.1
