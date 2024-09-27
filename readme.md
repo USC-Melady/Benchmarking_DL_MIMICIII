@@ -39,7 +39,7 @@ The preprocessing should finish within 1 day with `--num_workers 4`.
 
 All input files are stored under `data/` and require 36GB disk space.
 
-We also provide processed data upon request (only containing necessary files for training following models). Please contact Chuizheng Meng (chuizhem@usc.edu) for the processed data.
+We also provide processed data hosted on [Google Drive](https://drive.google.com/file/d/1URr0d6ZL4jBygM5trel260SoisDmJ536/view?usp=drive_link) (only containing necessary files for training following models). Please contact Chuizheng Meng (mengcz95thu@gmail.com) if you have any questions.
 
 ### Evaluate performance
 
